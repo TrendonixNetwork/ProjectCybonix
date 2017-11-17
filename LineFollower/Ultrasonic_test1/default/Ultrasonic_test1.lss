@@ -1,0 +1,457 @@
+
+Ultrasonic_test1.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002ae  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          0000000c  00800060  00800060  00000322  2**0
+                  ALLOC
+  2 .debug_aranges 00000020  00000000  00000000  00000322  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_pubnames 0000008f  00000000  00000000  00000342  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   000002bb  00000000  00000000  000003d1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000014d  00000000  00000000  0000068c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   0000024c  00000000  00000000  000007d9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000060  00000000  00000000  00000a28  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000163  00000000  00000000  00000a88  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000013  00000000  00000000  00000beb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 58 00 	jmp	0xb0	; 0xb0 <__vector_8>
+  24:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	ac 36       	cpi	r26, 0x6C	; 108
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 3e 00 	call	0x7c	; 0x7c <main>
+  74:	0c 94 55 01 	jmp	0x2aa	; 0x2aa <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <main>:
+//#endif /* SONAR_H_ */
+
+
+void main()
+{
+DDRA=0x00;
+  7c:	1a ba       	out	0x1a, r1	; 26
+DDRD=0xff;
+  7e:	8f ef       	ldi	r24, 0xFF	; 255
+  80:	81 bb       	out	0x11, r24	; 17
+while(1)
+{
+s=(PINA&0x01);
+if(s==0x01)
+{
+PORTD=0b00000010;
+  82:	82 e0       	ldi	r24, 0x02	; 2
+DDRD=0xff;
+int s=0;
+while(1)
+{
+s=(PINA&0x01);
+if(s==0x01)
+  84:	c8 9b       	sbis	0x19, 0	; 25
+  86:	02 c0       	rjmp	.+4      	; 0x8c <main+0x10>
+{
+PORTD=0b00000010;
+  88:	82 bb       	out	0x12, r24	; 18
+  8a:	fc cf       	rjmp	.-8      	; 0x84 <main+0x8>
+s=0;
+}
+else
+
+PORTD=0x00;
+  8c:	12 ba       	out	0x12, r1	; 18
+  8e:	fa cf       	rjmp	.-12     	; 0x84 <main+0x8>
+
+00000090 <init_sonar>:
+ * Initiate Ultrasonic Module Ports and Pins
+ * Input:   none
+ * Returns: none
+*********** ...- . . .-. --- -... --- - *********************************/
+void init_sonar(){
+    TRIG_OUTPUT_MODE();     // Set Trigger pin as output
+  90:	88 9a       	sbi	0x11, 0	; 17
+    ECHO_INPUT_MODE();      // Set Echo pin as input
+  92:	d0 98       	cbi	0x1a, 0	; 26
+}
+  94:	08 95       	ret
+
+00000096 <trigger_sonar>:
+ * 3.   Clear trigger pin to pull it trigger pin low
+ *  Input:   none
+ *  Returns: none
+********** ...- . . .-. --- -... --- - *********************************/
+void trigger_sonar(){
+    TRIG_LOW();             // Clear pin before setting it high
+  96:	90 98       	cbi	0x12, 0	; 18
+    can be achieved.
+*/
+void
+_delay_loop_1(uint8_t __count)
+{
+	__asm__ volatile (
+  98:	81 e0       	ldi	r24, 0x01	; 1
+  9a:	98 2f       	mov	r25, r24
+  9c:	9a 95       	dec	r25
+  9e:	f1 f7       	brne	.-4      	; 0x9c <trigger_sonar+0x6>
+    _delay_us(1);           // Clear to zero and give time for electronics to set
+    TRIG_HIGH();            // Set pin high
+  a0:	90 9a       	sbi	0x12, 0	; 18
+  a2:	94 e0       	ldi	r25, 0x04	; 4
+  a4:	9a 95       	dec	r25
+  a6:	f1 f7       	brne	.-4      	; 0xa4 <trigger_sonar+0xe>
+    _delay_us(12);          // Send high pulse for minimum 10us
+    TRIG_LOW();             // Clear pin
+  a8:	90 98       	cbi	0x12, 0	; 18
+  aa:	8a 95       	dec	r24
+  ac:	f1 f7       	brne	.-4      	; 0xaa <trigger_sonar+0x14>
+    _delay_us(1);           // Delay not required, but just in case...
+}
+  ae:	08 95       	ret
+
+000000b0 <__vector_8>:
+/********** ...- . . .-. --- -... --- - *********************************
+ * Increment timer on each overflow
+ * Input:   none
+ * Returns: none
+********** ...- . . .-. --- -... --- - *********************************/
+ISR(TIMER1_OVF_vect){   // Timer1 overflow interrupt
+  b0:	1f 92       	push	r1
+  b2:	0f 92       	push	r0
+  b4:	0f b6       	in	r0, 0x3f	; 63
+  b6:	0f 92       	push	r0
+  b8:	11 24       	eor	r1, r1
+  ba:	8f 93       	push	r24
+  bc:	9f 93       	push	r25
+  be:	af 93       	push	r26
+  c0:	bf 93       	push	r27
+    overFlowCounter++;
+  c2:	80 91 60 00 	lds	r24, 0x0060
+  c6:	90 91 61 00 	lds	r25, 0x0061
+  ca:	a0 91 62 00 	lds	r26, 0x0062
+  ce:	b0 91 63 00 	lds	r27, 0x0063
+  d2:	01 96       	adiw	r24, 0x01	; 1
+  d4:	a1 1d       	adc	r26, r1
+  d6:	b1 1d       	adc	r27, r1
+  d8:	80 93 60 00 	sts	0x0060, r24
+  dc:	90 93 61 00 	sts	0x0061, r25
+  e0:	a0 93 62 00 	sts	0x0062, r26
+  e4:	b0 93 63 00 	sts	0x0063, r27
+    TCNT1=0;
+  e8:	1d bc       	out	0x2d, r1	; 45
+  ea:	1c bc       	out	0x2c, r1	; 44
+}
+  ec:	bf 91       	pop	r27
+  ee:	af 91       	pop	r26
+  f0:	9f 91       	pop	r25
+  f2:	8f 91       	pop	r24
+  f4:	0f 90       	pop	r0
+  f6:	0f be       	out	0x3f, r0	; 63
+  f8:	0f 90       	pop	r0
+  fa:	1f 90       	pop	r1
+  fc:	18 95       	reti
+
+000000fe <read_sonar>:
+ * Input:   none
+ * Returns: 1. -1       :   Indicates trigger error. Could not pull trigger high
+ *          2. -2       :   Indicates echo error. No echo received within range
+ *          3. Distance :   Sonar calculated distance in cm.
+********** ...- . . .-. --- -... --- - *********************************/
+unsigned int read_sonar(){
+  fe:	ef 92       	push	r14
+ 100:	ff 92       	push	r15
+ 102:	0f 93       	push	r16
+ 104:	1f 93       	push	r17
+ * Initiate Ultrasonic Module Ports and Pins
+ * Input:   none
+ * Returns: none
+*********** ...- . . .-. --- -... --- - *********************************/
+void init_sonar(){
+    TRIG_OUTPUT_MODE();     // Set Trigger pin as output
+ 106:	88 9a       	sbi	0x11, 0	; 17
+    ECHO_INPUT_MODE();      // Set Echo pin as input
+ 108:	d0 98       	cbi	0x1a, 0	; 26
+ *          3. Distance :   Sonar calculated distance in cm.
+********** ...- . . .-. --- -... --- - *********************************/
+unsigned int read_sonar(){
+    int dist_in_cm = 0;
+    init_sonar();                       // Setup pins and ports
+    trigger_sonar();                    // send a 10us high pulse
+ 10a:	0e 94 4b 00 	call	0x96	; 0x96 <trigger_sonar>
+ 10e:	23 c0       	rjmp	.+70     	; 0x156 <read_sonar+0x58>
+ 
+    while(!(ECHO_PIN & (1<<ECHO_BIT))){   // while echo pin is still low
+        trig_counter++;
+ 110:	80 91 64 00 	lds	r24, 0x0064
+ 114:	90 91 65 00 	lds	r25, 0x0065
+ 118:	a0 91 66 00 	lds	r26, 0x0066
+ 11c:	b0 91 67 00 	lds	r27, 0x0067
+ 120:	01 96       	adiw	r24, 0x01	; 1
+ 122:	a1 1d       	adc	r26, r1
+ 124:	b1 1d       	adc	r27, r1
+ 126:	80 93 64 00 	sts	0x0064, r24
+ 12a:	90 93 65 00 	sts	0x0065, r25
+ 12e:	a0 93 66 00 	sts	0x0066, r26
+ 132:	b0 93 67 00 	sts	0x0067, r27
+         uint32_t max_response_time = SONAR_TIMEOUT;
+        if (trig_counter > max_response_time){   // SONAR_TIMEOUT
+ 136:	80 91 64 00 	lds	r24, 0x0064
+ 13a:	90 91 65 00 	lds	r25, 0x0065
+ 13e:	a0 91 66 00 	lds	r26, 0x0066
+ 142:	b0 91 67 00 	lds	r27, 0x0067
+ 146:	83 5e       	subi	r24, 0xE3	; 227
+ 148:	91 47       	sbci	r25, 0x71	; 113
+ 14a:	a0 40       	sbci	r26, 0x00	; 0
+ 14c:	b0 40       	sbci	r27, 0x00	; 0
+ 14e:	18 f0       	brcs	.+6      	; 0x156 <read_sonar+0x58>
+ 150:	2f ef       	ldi	r18, 0xFF	; 255
+ 152:	3f ef       	ldi	r19, 0xFF	; 255
+ 154:	63 c0       	rjmp	.+198    	; 0x21c <read_sonar+0x11e>
+unsigned int read_sonar(){
+    int dist_in_cm = 0;
+    init_sonar();                       // Setup pins and ports
+    trigger_sonar();                    // send a 10us high pulse
+ 
+    while(!(ECHO_PIN & (1<<ECHO_BIT))){   // while echo pin is still low
+ 156:	c8 9b       	sbis	0x19, 0	; 25
+ 158:	db cf       	rjmp	.-74     	; 0x110 <read_sonar+0x12>
+        if (trig_counter > max_response_time){   // SONAR_TIMEOUT
+            return TRIG_ERROR;
+        }
+    }
+ 
+    TCNT1=0;                            // reset timer
+ 15a:	1d bc       	out	0x2d, r1	; 45
+ 15c:	1c bc       	out	0x2c, r1	; 44
+    TCCR1B |= (1<<CS10);              // start 16 bit timer with no prescaler
+ 15e:	8e b5       	in	r24, 0x2e	; 46
+ 160:	81 60       	ori	r24, 0x01	; 1
+ 162:	8e bd       	out	0x2e, r24	; 46
+    //TIMSK1 |= (1<<TOIE1);             // enable overflow interrupt on timer1
+    overFlowCounter=0;                  // reset overflow counter
+ 164:	10 92 60 00 	sts	0x0060, r1
+ 168:	10 92 61 00 	sts	0x0061, r1
+ 16c:	10 92 62 00 	sts	0x0062, r1
+ 170:	10 92 63 00 	sts	0x0063, r1
+    sei();                              // enable global interrupts
+ 174:	78 94       	sei
+ 176:	22 c0       	rjmp	.+68     	; 0x1bc <read_sonar+0xbe>
+ 
+    while((ECHO_PIN & (1<<ECHO_BIT))){    // while echo pin is still high
+        if (((overFlowCounter*TIMER_MAX)+TCNT1) > SONAR_TIMEOUT){
+ 178:	60 91 60 00 	lds	r22, 0x0060
+ 17c:	70 91 61 00 	lds	r23, 0x0061
+ 180:	80 91 62 00 	lds	r24, 0x0062
+ 184:	90 91 63 00 	lds	r25, 0x0063
+ 188:	ec b4       	in	r14, 0x2c	; 44
+ 18a:	fd b4       	in	r15, 0x2d	; 45
+ 18c:	00 e0       	ldi	r16, 0x00	; 0
+ 18e:	10 e0       	ldi	r17, 0x00	; 0
+ 190:	2f ef       	ldi	r18, 0xFF	; 255
+ 192:	3f ef       	ldi	r19, 0xFF	; 255
+ 194:	40 e0       	ldi	r20, 0x00	; 0
+ 196:	50 e0       	ldi	r21, 0x00	; 0
+ 198:	0e 94 14 01 	call	0x228	; 0x228 <__mulsi3>
+ 19c:	e6 0e       	add	r14, r22
+ 19e:	f7 1e       	adc	r15, r23
+ 1a0:	08 1f       	adc	r16, r24
+ 1a2:	19 1f       	adc	r17, r25
+ 1a4:	83 ee       	ldi	r24, 0xE3	; 227
+ 1a6:	e8 16       	cp	r14, r24
+ 1a8:	81 e7       	ldi	r24, 0x71	; 113
+ 1aa:	f8 06       	cpc	r15, r24
+ 1ac:	80 e0       	ldi	r24, 0x00	; 0
+ 1ae:	08 07       	cpc	r16, r24
+ 1b0:	80 e0       	ldi	r24, 0x00	; 0
+ 1b2:	18 07       	cpc	r17, r24
+ 1b4:	18 f0       	brcs	.+6      	; 0x1bc <read_sonar+0xbe>
+ 1b6:	2e ef       	ldi	r18, 0xFE	; 254
+ 1b8:	3f ef       	ldi	r19, 0xFF	; 255
+ 1ba:	30 c0       	rjmp	.+96     	; 0x21c <read_sonar+0x11e>
+    TCCR1B |= (1<<CS10);              // start 16 bit timer with no prescaler
+    //TIMSK1 |= (1<<TOIE1);             // enable overflow interrupt on timer1
+    overFlowCounter=0;                  // reset overflow counter
+    sei();                              // enable global interrupts
+ 
+    while((ECHO_PIN & (1<<ECHO_BIT))){    // while echo pin is still high
+ 1bc:	c8 99       	sbic	0x19, 0	; 25
+ 1be:	dc cf       	rjmp	.-72     	; 0x178 <read_sonar+0x7a>
+        if (((overFlowCounter*TIMER_MAX)+TCNT1) > SONAR_TIMEOUT){
+            return ECHO_ERROR;          // No echo within sonar range
+        }
+    };
+ 
+    TCCR1B = 0x00;                      // stop 16 bit timer with no prescaler
+ 1c0:	1e bc       	out	0x2e, r1	; 46
+    cli();                              // disable global interrupts
+ 1c2:	f8 94       	cli
+    no_of_ticks = ((overFlowCounter*TIMER_MAX)+TCNT1);  // counter count
+ 1c4:	60 91 60 00 	lds	r22, 0x0060
+ 1c8:	70 91 61 00 	lds	r23, 0x0061
+ 1cc:	80 91 62 00 	lds	r24, 0x0062
+ 1d0:	90 91 63 00 	lds	r25, 0x0063
+ 1d4:	ec b4       	in	r14, 0x2c	; 44
+ 1d6:	fd b4       	in	r15, 0x2d	; 45
+ 1d8:	00 e0       	ldi	r16, 0x00	; 0
+ 1da:	10 e0       	ldi	r17, 0x00	; 0
+ 1dc:	2f ef       	ldi	r18, 0xFF	; 255
+ 1de:	3f ef       	ldi	r19, 0xFF	; 255
+ 1e0:	40 e0       	ldi	r20, 0x00	; 0
+ 1e2:	50 e0       	ldi	r21, 0x00	; 0
+ 1e4:	0e 94 14 01 	call	0x228	; 0x228 <__mulsi3>
+ 1e8:	e6 0e       	add	r14, r22
+ 1ea:	f7 1e       	adc	r15, r23
+ 1ec:	08 1f       	adc	r16, r24
+ 1ee:	19 1f       	adc	r17, r25
+ 1f0:	e0 92 68 00 	sts	0x0068, r14
+ 1f4:	f0 92 69 00 	sts	0x0069, r15
+ 1f8:	00 93 6a 00 	sts	0x006A, r16
+ 1fc:	10 93 6b 00 	sts	0x006B, r17
+    dist_in_cm = (no_of_ticks/(CONVERT_TO_CM*CYCLES_PER_US));   // distance in cm
+ 200:	60 91 68 00 	lds	r22, 0x0068
+ 204:	70 91 69 00 	lds	r23, 0x0069
+ 208:	80 91 6a 00 	lds	r24, 0x006A
+ 20c:	90 91 6b 00 	lds	r25, 0x006B
+    return (dist_in_cm );
+ 210:	2a e3       	ldi	r18, 0x3A	; 58
+ 212:	30 e0       	ldi	r19, 0x00	; 0
+ 214:	40 e0       	ldi	r20, 0x00	; 0
+ 216:	50 e0       	ldi	r21, 0x00	; 0
+ 218:	0e 94 33 01 	call	0x266	; 0x266 <__udivmodsi4>
+}
+ 21c:	c9 01       	movw	r24, r18
+ 21e:	1f 91       	pop	r17
+ 220:	0f 91       	pop	r16
+ 222:	ff 90       	pop	r15
+ 224:	ef 90       	pop	r14
+ 226:	08 95       	ret
+
+00000228 <__mulsi3>:
+ 228:	62 9f       	mul	r22, r18
+ 22a:	d0 01       	movw	r26, r0
+ 22c:	73 9f       	mul	r23, r19
+ 22e:	f0 01       	movw	r30, r0
+ 230:	82 9f       	mul	r24, r18
+ 232:	e0 0d       	add	r30, r0
+ 234:	f1 1d       	adc	r31, r1
+ 236:	64 9f       	mul	r22, r20
+ 238:	e0 0d       	add	r30, r0
+ 23a:	f1 1d       	adc	r31, r1
+ 23c:	92 9f       	mul	r25, r18
+ 23e:	f0 0d       	add	r31, r0
+ 240:	83 9f       	mul	r24, r19
+ 242:	f0 0d       	add	r31, r0
+ 244:	74 9f       	mul	r23, r20
+ 246:	f0 0d       	add	r31, r0
+ 248:	65 9f       	mul	r22, r21
+ 24a:	f0 0d       	add	r31, r0
+ 24c:	99 27       	eor	r25, r25
+ 24e:	72 9f       	mul	r23, r18
+ 250:	b0 0d       	add	r27, r0
+ 252:	e1 1d       	adc	r30, r1
+ 254:	f9 1f       	adc	r31, r25
+ 256:	63 9f       	mul	r22, r19
+ 258:	b0 0d       	add	r27, r0
+ 25a:	e1 1d       	adc	r30, r1
+ 25c:	f9 1f       	adc	r31, r25
+ 25e:	bd 01       	movw	r22, r26
+ 260:	cf 01       	movw	r24, r30
+ 262:	11 24       	eor	r1, r1
+ 264:	08 95       	ret
+
+00000266 <__udivmodsi4>:
+ 266:	a1 e2       	ldi	r26, 0x21	; 33
+ 268:	1a 2e       	mov	r1, r26
+ 26a:	aa 1b       	sub	r26, r26
+ 26c:	bb 1b       	sub	r27, r27
+ 26e:	fd 01       	movw	r30, r26
+ 270:	0d c0       	rjmp	.+26     	; 0x28c <__udivmodsi4_ep>
+
+00000272 <__udivmodsi4_loop>:
+ 272:	aa 1f       	adc	r26, r26
+ 274:	bb 1f       	adc	r27, r27
+ 276:	ee 1f       	adc	r30, r30
+ 278:	ff 1f       	adc	r31, r31
+ 27a:	a2 17       	cp	r26, r18
+ 27c:	b3 07       	cpc	r27, r19
+ 27e:	e4 07       	cpc	r30, r20
+ 280:	f5 07       	cpc	r31, r21
+ 282:	20 f0       	brcs	.+8      	; 0x28c <__udivmodsi4_ep>
+ 284:	a2 1b       	sub	r26, r18
+ 286:	b3 0b       	sbc	r27, r19
+ 288:	e4 0b       	sbc	r30, r20
+ 28a:	f5 0b       	sbc	r31, r21
+
+0000028c <__udivmodsi4_ep>:
+ 28c:	66 1f       	adc	r22, r22
+ 28e:	77 1f       	adc	r23, r23
+ 290:	88 1f       	adc	r24, r24
+ 292:	99 1f       	adc	r25, r25
+ 294:	1a 94       	dec	r1
+ 296:	69 f7       	brne	.-38     	; 0x272 <__udivmodsi4_loop>
+ 298:	60 95       	com	r22
+ 29a:	70 95       	com	r23
+ 29c:	80 95       	com	r24
+ 29e:	90 95       	com	r25
+ 2a0:	9b 01       	movw	r18, r22
+ 2a2:	ac 01       	movw	r20, r24
+ 2a4:	bd 01       	movw	r22, r26
+ 2a6:	cf 01       	movw	r24, r30
+ 2a8:	08 95       	ret
+
+000002aa <_exit>:
+ 2aa:	f8 94       	cli
+
+000002ac <__stop_program>:
+ 2ac:	ff cf       	rjmp	.-2      	; 0x2ac <__stop_program>

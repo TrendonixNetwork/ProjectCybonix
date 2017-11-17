@@ -1,0 +1,456 @@
+
+ultrasonic_3.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002a2  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          0000000d  00800060  00800060  00000316  2**0
+                  ALLOC
+  2 .debug_aranges 00000020  00000000  00000000  00000316  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_pubnames 0000008c  00000000  00000000  00000336  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   000002aa  00000000  00000000  000003c2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 0000016e  00000000  00000000  0000066c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   00000284  00000000  00000000  000007da  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000070  00000000  00000000  00000a60  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000014c  00000000  00000000  00000ad0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    0000002b  00000000  00000000  00000c1c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000060  00000000  00000000  00000c47  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 6c 00 	jmp	0xd8	; 0xd8 <__vector_2>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 43 00 	jmp	0x86	; 0x86 <__vector_9>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	ad 36       	cpi	r26, 0x6D	; 109
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 fa 00 	call	0x1f4	; 0x1f4 <main>
+  74:	0c 94 4f 01 	jmp	0x29e	; 0x29e <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <InitADC>:
+
+// interrupt for INT1 pin, to detect high/low voltage changes
+
+void InitADC()
+{
+	ADMUX=(1<<REFS0);                                  	// For Aref=AVcc;
+  7c:	80 e4       	ldi	r24, 0x40	; 64
+  7e:	87 b9       	out	0x07, r24	; 7
+	ADCSRA=(1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0);    //Prescalar div factor =128
+  80:	87 e8       	ldi	r24, 0x87	; 135
+  82:	86 b9       	out	0x06, r24	; 6
+
+}
+  84:	08 95       	ret
+
+00000086 <__vector_9>:
+
+
+ISR(TIMER0_OVF_vect)
+{
+  86:	1f 92       	push	r1
+  88:	0f 92       	push	r0
+  8a:	0f b6       	in	r0, 0x3f	; 63
+  8c:	0f 92       	push	r0
+  8e:	11 24       	eor	r1, r1
+  90:	8f 93       	push	r24
+  92:	9f 93       	push	r25
+  94:	af 93       	push	r26
+  96:	bf 93       	push	r27
+    if(up) 
+  98:	80 91 60 00 	lds	r24, 0x0060
+  9c:	88 23       	and	r24, r24
+  9e:	99 f0       	breq	.+38     	; 0xc6 <__vector_9+0x40>
+	
+	{
+        timercounter++;
+  a0:	80 91 65 00 	lds	r24, 0x0065
+  a4:	90 91 66 00 	lds	r25, 0x0066
+  a8:	a0 91 67 00 	lds	r26, 0x0067
+  ac:	b0 91 68 00 	lds	r27, 0x0068
+  b0:	01 96       	adiw	r24, 0x01	; 1
+  b2:	a1 1d       	adc	r26, r1
+  b4:	b1 1d       	adc	r27, r1
+  b6:	80 93 65 00 	sts	0x0065, r24
+  ba:	90 93 66 00 	sts	0x0066, r25
+  be:	a0 93 67 00 	sts	0x0067, r26
+  c2:	b0 93 68 00 	sts	0x0068, r27
+    }
+}
+  c6:	bf 91       	pop	r27
+  c8:	af 91       	pop	r26
+  ca:	9f 91       	pop	r25
+  cc:	8f 91       	pop	r24
+  ce:	0f 90       	pop	r0
+  d0:	0f be       	out	0x3f, r0	; 63
+  d2:	0f 90       	pop	r0
+  d4:	1f 90       	pop	r1
+  d6:	18 95       	reti
+
+000000d8 <__vector_2>:
+
+
+// We assume, that high voltage rise comes before low drop and not vice versa
+// Check change in the level at the PD3 for falling/rising edge
+SIGNAL(INT1_vect){
+  d8:	1f 92       	push	r1
+  da:	0f 92       	push	r0
+  dc:	0f b6       	in	r0, 0x3f	; 63
+  de:	0f 92       	push	r0
+  e0:	11 24       	eor	r1, r1
+  e2:	2f 93       	push	r18
+  e4:	3f 93       	push	r19
+  e6:	4f 93       	push	r20
+  e8:	5f 93       	push	r21
+  ea:	6f 93       	push	r22
+  ec:	7f 93       	push	r23
+  ee:	8f 93       	push	r24
+  f0:	9f 93       	push	r25
+  f2:	af 93       	push	r26
+  f4:	bf 93       	push	r27
+  f6:	ef 93       	push	r30
+  f8:	ff 93       	push	r31
+    if(running){ //accept interrupts only when sonar was started
+  fa:	80 91 61 00 	lds	r24, 0x0061
+  fe:	90 91 62 00 	lds	r25, 0x0062
+ 102:	a0 91 63 00 	lds	r26, 0x0063
+ 106:	b0 91 64 00 	lds	r27, 0x0064
+ 10a:	00 97       	sbiw	r24, 0x00	; 0
+ 10c:	a1 05       	cpc	r26, r1
+ 10e:	b1 05       	cpc	r27, r1
+ 110:	09 f4       	brne	.+2      	; 0x114 <__vector_2+0x3c>
+ 112:	3f c0       	rjmp	.+126    	; 0x192 <__vector_2+0xba>
+        if (up == 0) { // voltage rise, start time measurement
+ 114:	80 91 60 00 	lds	r24, 0x0060
+ 118:	88 23       	and	r24, r24
+ 11a:	81 f4       	brne	.+32     	; 0x13c <__vector_2+0x64>
+            up = 1;
+ 11c:	81 e0       	ldi	r24, 0x01	; 1
+ 11e:	80 93 60 00 	sts	0x0060, r24
+            timercounter = 0;            
+ 122:	10 92 65 00 	sts	0x0065, r1
+ 126:	10 92 66 00 	sts	0x0066, r1
+ 12a:	10 92 67 00 	sts	0x0067, r1
+ 12e:	10 92 68 00 	sts	0x0068, r1
+            TCCR0 |= (0 << CS02)|(0 << CS01)|(1 << CS00); // Start/initialize timer with prescalar 0
+ 132:	83 b7       	in	r24, 0x33	; 51
+ 134:	81 60       	ori	r24, 0x01	; 1
+ 136:	83 bf       	out	0x33, r24	; 51
+            TCNT0 = 0; // Initialize Counter
+ 138:	12 be       	out	0x32, r1	; 50
+ 13a:	2b c0       	rjmp	.+86     	; 0x192 <__vector_2+0xba>
+        } else { // voltage drop, stop time measurement
+            up = 0;
+ 13c:	10 92 60 00 	sts	0x0060, r1
+            avg = (timercounter*256+TCNT0)/58;// divide by 58 to get distance in cm
+ 140:	60 91 65 00 	lds	r22, 0x0065
+ 144:	70 91 66 00 	lds	r23, 0x0066
+ 148:	80 91 67 00 	lds	r24, 0x0067
+ 14c:	90 91 68 00 	lds	r25, 0x0068
+ 150:	22 b7       	in	r18, 0x32	; 50
+ 152:	98 2f       	mov	r25, r24
+ 154:	87 2f       	mov	r24, r23
+ 156:	76 2f       	mov	r23, r22
+ 158:	66 27       	eor	r22, r22
+ 15a:	62 0f       	add	r22, r18
+ 15c:	71 1d       	adc	r23, r1
+ 15e:	81 1d       	adc	r24, r1
+ 160:	91 1d       	adc	r25, r1
+ 162:	2a e3       	ldi	r18, 0x3A	; 58
+ 164:	30 e0       	ldi	r19, 0x00	; 0
+ 166:	40 e0       	ldi	r20, 0x00	; 0
+ 168:	50 e0       	ldi	r21, 0x00	; 0
+ 16a:	0e 94 2d 01 	call	0x25a	; 0x25a <__udivmodsi4>
+ 16e:	c9 01       	movw	r24, r18
+ 170:	da 01       	movw	r26, r20
+ 172:	80 93 69 00 	sts	0x0069, r24
+ 176:	90 93 6a 00 	sts	0x006A, r25
+ 17a:	a0 93 6b 00 	sts	0x006B, r26
+ 17e:	b0 93 6c 00 	sts	0x006C, r27
+           // light_flashing();
+            running = 0;
+ 182:	10 92 61 00 	sts	0x0061, r1
+ 186:	10 92 62 00 	sts	0x0062, r1
+ 18a:	10 92 63 00 	sts	0x0063, r1
+ 18e:	10 92 64 00 	sts	0x0064, r1
+        }
+    }
+}
+ 192:	ff 91       	pop	r31
+ 194:	ef 91       	pop	r30
+ 196:	bf 91       	pop	r27
+ 198:	af 91       	pop	r26
+ 19a:	9f 91       	pop	r25
+ 19c:	8f 91       	pop	r24
+ 19e:	7f 91       	pop	r23
+ 1a0:	6f 91       	pop	r22
+ 1a2:	5f 91       	pop	r21
+ 1a4:	4f 91       	pop	r20
+ 1a6:	3f 91       	pop	r19
+ 1a8:	2f 91       	pop	r18
+ 1aa:	0f 90       	pop	r0
+ 1ac:	0f be       	out	0x3f, r0	; 63
+ 1ae:	0f 90       	pop	r0
+ 1b0:	1f 90       	pop	r1
+ 1b2:	18 95       	reti
+
+000001b4 <send_trig>:
+
+
+void send_trig() // function to send out signal through trig pin
+{
+
+	PORTD = 0x00;
+ 1b4:	12 ba       	out	0x12, r1	; 18
+    can be achieved.
+*/
+void
+_delay_loop_1(uint8_t __count)
+{
+	__asm__ volatile (
+ 1b6:	81 e0       	ldi	r24, 0x01	; 1
+ 1b8:	8a 95       	dec	r24
+ 1ba:	f1 f7       	brne	.-4      	; 0x1b8 <send_trig+0x4>
+	_delay_us(5);
+
+    PORTD = 0xf0;
+ 1bc:	80 ef       	ldi	r24, 0xF0	; 240
+ 1be:	82 bb       	out	0x12, r24	; 18
+     running = 1;
+ 1c0:	81 e0       	ldi	r24, 0x01	; 1
+ 1c2:	90 e0       	ldi	r25, 0x00	; 0
+ 1c4:	a0 e0       	ldi	r26, 0x00	; 0
+ 1c6:	b0 e0       	ldi	r27, 0x00	; 0
+ 1c8:	80 93 61 00 	sts	0x0061, r24
+ 1cc:	90 93 62 00 	sts	0x0062, r25
+ 1d0:	a0 93 63 00 	sts	0x0063, r26
+ 1d4:	b0 93 64 00 	sts	0x0064, r27
+ 1d8:	83 e0       	ldi	r24, 0x03	; 3
+ 1da:	8a 95       	dec	r24
+ 1dc:	f1 f7       	brne	.-4      	; 0x1da <send_trig+0x26>
+	 
+    _delay_us(10);
+    PORTD = 0x00;
+ 1de:	12 ba       	out	0x12, r1	; 18
+
+
+}
+ 1e0:	08 95       	ret
+
+000001e2 <echo_rec>:
+
+void echo_rec()
+{
+
+if(PIND&0x0f)
+ 1e2:	80 b3       	in	r24, 0x10	; 16
+ 1e4:	90 e0       	ldi	r25, 0x00	; 0
+ 1e6:	8f 70       	andi	r24, 0x0F	; 15
+ 1e8:	90 70       	andi	r25, 0x00	; 0
+ 1ea:	89 2b       	or	r24, r25
+ 1ec:	11 f0       	breq	.+4      	; 0x1f2 <echo_rec+0x10>
+{
+PORTC=0xff;
+ 1ee:	8f ef       	ldi	r24, 0xFF	; 255
+ 1f0:	85 bb       	out	0x15, r24	; 21
+ 1f2:	08 95       	ret
+
+000001f4 <main>:
+}
+
+
+void main()
+
+{
+ 1f4:	0f 93       	push	r16
+ 1f6:	1f 93       	push	r17
+ 1f8:	cf 93       	push	r28
+ 1fa:	df 93       	push	r29
+
+	DDRD = 0xf0;
+ 1fc:	80 ef       	ldi	r24, 0xF0	; 240
+ 1fe:	81 bb       	out	0x11, r24	; 17
+	PORTD=0x00;
+ 200:	12 ba       	out	0x12, r1	; 18
+	DDRB = 0xff;
+ 202:	8f ef       	ldi	r24, 0xFF	; 255
+ 204:	87 bb       	out	0x17, r24	; 23
+	PORTB=0x00;
+ 206:	18 ba       	out	0x18, r1	; 24
+	DDRC=0xff;
+ 208:	84 bb       	out	0x14, r24	; 20
+
+	MCUCR |= (0 << ISC11) | (1 << ISC10); // enable interrupt on any(rising/droping) edge
+ 20a:	85 b7       	in	r24, 0x35	; 53
+ 20c:	84 60       	ori	r24, 0x04	; 4
+ 20e:	85 bf       	out	0x35, r24	; 53
+    GICR |= (1 << INT1);  //Turns on INT1
+ 210:	8b b7       	in	r24, 0x3b	; 59
+ 212:	80 68       	ori	r24, 0x80	; 128
+ 214:	8b bf       	out	0x3b, r24	; 59
+
+    TIMSK |= (1 << TOIE0);  // enable timer interrupt
+ 216:	89 b7       	in	r24, 0x39	; 57
+ 218:	81 60       	ori	r24, 0x01	; 1
+ 21a:	89 bf       	out	0x39, r24	; 57
+    sei();  // enable all(global) interrupts
+ 21c:	78 94       	sei
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+ 21e:	c8 e9       	ldi	r28, 0x98	; 152
+ 220:	da e3       	ldi	r29, 0x3A	; 58
+	if(running==0)
+	{
+		_delay_ms(60);
+
+	send_trig();
+	PORTB=0b00000111;
+ 222:	07 e0       	ldi	r16, 0x07	; 7
+void echo_rec()
+{
+
+if(PIND&0x0f)
+{
+PORTC=0xff;
+ 224:	1f ef       	ldi	r17, 0xFF	; 255
+
+	
+
+	while(1)
+	{
+	if(running==0)
+ 226:	80 91 61 00 	lds	r24, 0x0061
+ 22a:	90 91 62 00 	lds	r25, 0x0062
+ 22e:	a0 91 63 00 	lds	r26, 0x0063
+ 232:	b0 91 64 00 	lds	r27, 0x0064
+ 236:	00 97       	sbiw	r24, 0x00	; 0
+ 238:	a1 05       	cpc	r26, r1
+ 23a:	b1 05       	cpc	r27, r1
+ 23c:	31 f4       	brne	.+12     	; 0x24a <main+0x56>
+ 23e:	ce 01       	movw	r24, r28
+ 240:	01 97       	sbiw	r24, 0x01	; 1
+ 242:	f1 f7       	brne	.-4      	; 0x240 <main+0x4c>
+	{
+		_delay_ms(60);
+
+	send_trig();
+ 244:	0e 94 da 00 	call	0x1b4	; 0x1b4 <send_trig>
+	PORTB=0b00000111;
+ 248:	08 bb       	out	0x18, r16	; 24
+}
+
+void echo_rec()
+{
+
+if(PIND&0x0f)
+ 24a:	80 b3       	in	r24, 0x10	; 16
+ 24c:	90 e0       	ldi	r25, 0x00	; 0
+ 24e:	8f 70       	andi	r24, 0x0F	; 15
+ 250:	90 70       	andi	r25, 0x00	; 0
+ 252:	89 2b       	or	r24, r25
+ 254:	41 f3       	breq	.-48     	; 0x226 <main+0x32>
+{
+PORTC=0xff;
+ 256:	15 bb       	out	0x15, r17	; 21
+ 258:	e6 cf       	rjmp	.-52     	; 0x226 <main+0x32>
+
+0000025a <__udivmodsi4>:
+ 25a:	a1 e2       	ldi	r26, 0x21	; 33
+ 25c:	1a 2e       	mov	r1, r26
+ 25e:	aa 1b       	sub	r26, r26
+ 260:	bb 1b       	sub	r27, r27
+ 262:	fd 01       	movw	r30, r26
+ 264:	0d c0       	rjmp	.+26     	; 0x280 <__udivmodsi4_ep>
+
+00000266 <__udivmodsi4_loop>:
+ 266:	aa 1f       	adc	r26, r26
+ 268:	bb 1f       	adc	r27, r27
+ 26a:	ee 1f       	adc	r30, r30
+ 26c:	ff 1f       	adc	r31, r31
+ 26e:	a2 17       	cp	r26, r18
+ 270:	b3 07       	cpc	r27, r19
+ 272:	e4 07       	cpc	r30, r20
+ 274:	f5 07       	cpc	r31, r21
+ 276:	20 f0       	brcs	.+8      	; 0x280 <__udivmodsi4_ep>
+ 278:	a2 1b       	sub	r26, r18
+ 27a:	b3 0b       	sbc	r27, r19
+ 27c:	e4 0b       	sbc	r30, r20
+ 27e:	f5 0b       	sbc	r31, r21
+
+00000280 <__udivmodsi4_ep>:
+ 280:	66 1f       	adc	r22, r22
+ 282:	77 1f       	adc	r23, r23
+ 284:	88 1f       	adc	r24, r24
+ 286:	99 1f       	adc	r25, r25
+ 288:	1a 94       	dec	r1
+ 28a:	69 f7       	brne	.-38     	; 0x266 <__udivmodsi4_loop>
+ 28c:	60 95       	com	r22
+ 28e:	70 95       	com	r23
+ 290:	80 95       	com	r24
+ 292:	90 95       	com	r25
+ 294:	9b 01       	movw	r18, r22
+ 296:	ac 01       	movw	r20, r24
+ 298:	bd 01       	movw	r22, r26
+ 29a:	cf 01       	movw	r24, r30
+ 29c:	08 95       	ret
+
+0000029e <_exit>:
+ 29e:	f8 94       	cli
+
+000002a0 <__stop_program>:
+ 2a0:	ff cf       	rjmp	.-2      	; 0x2a0 <__stop_program>

@@ -1,0 +1,47 @@
+/*!
+ * **********************************************************************************************
+ * \file sonar.c
+ * \brief Interfacing HC-SR04 Ultrasonic Sensor Module (Sonar)
+ *
+ * \author      :   Praveen Kumar
+ * \date        :   Mar 24, 2014
+ * Copyright(c)         :   Praveen Kumar - www.veerobot.com
+ * Description          :   refer sonar.h
+ *
+ * LICENSE      :   Refer sonar.h
+ *
+ * **********************************************************************************************
+ */
+ 
+#include "sonar.h"
+ 
+volatile uint32_t overFlowCounter = 0;
+volatile uint32_t trig_counter = 0;
+volatile uint32_t no_of_ticks = 0;
+ 
+/********** ...- . . .-. --- -... --- - *********************************
+ * Initiate Ultrasonic Module Ports and Pins
+ * Input:   none
+ * Returns: none
+*********** ...- . . .-. --- -... --- - *********************************/
+void init_sonar(){
+    TRIG_OUTPUT_MODE();     // Set Trigger pin as output
+    ECHO_INPUT_MODE();      // Set Echo pin as input
+}
+ 
+/********** ...- . . .-. --- -... --- - *********************************
+ * Send 10us pulse on Sonar Trigger pin
+ * 1.   Clear trigger pin before sending a pulse
+ * 2.   Send high pulse to trigger pin for 10us
+ * 3.   Clear trigger pin to pull it trigger pin low
+ *  Input:   none
+ *  Returns: none
+********** ...- . . .-. --- -... --- - *********************************/
+void trigger_sonar(){
+    TRIG_LOW();             // Clear pin before setting it high
+    _delay_us(1);           // Clear to zero and give time for electronics to set
+    TRIG_HIGH();            // Set pin high
+    _delay_us(12);          // Send high pulse for minimum 10us
+    TRIG_LOW();             // Clear pin
+    _delay_us(1);           // Delay not required, but just in case...
+}

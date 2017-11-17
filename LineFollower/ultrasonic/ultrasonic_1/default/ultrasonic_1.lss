@@ -1,0 +1,537 @@
+
+ultrasonic_1.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000003a6  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .bss          0000000d  00800060  00800060  0000041a  2**0
+                  ALLOC
+  2 .debug_aranges 00000020  00000000  00000000  0000041a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_pubnames 00000089  00000000  00000000  0000043a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_info   00000299  00000000  00000000  000004c3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_abbrev 00000156  00000000  00000000  0000075c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_line   000002a8  00000000  00000000  000008b2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_frame  00000060  00000000  00000000  00000b5c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    0000014d  00000000  00000000  00000bbc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00000043  00000000  00000000  00000d09  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000048  00000000  00000000  00000d4c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+   8:	0c 94 fc 00 	jmp	0x1f8	; 0x1f8 <__vector_2>
+   c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  10:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  14:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  18:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  1c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  20:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  24:	0c 94 3e 00 	jmp	0x7c	; 0x7c <__vector_9>
+  28:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  2c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  30:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  34:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  38:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  3c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  40:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  44:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  48:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  4c:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+  50:	0c 94 3c 00 	jmp	0x78	; 0x78 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_clear_bss>:
+  60:	10 e0       	ldi	r17, 0x00	; 0
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	01 c0       	rjmp	.+2      	; 0x6a <.do_clear_bss_start>
+
+00000068 <.do_clear_bss_loop>:
+  68:	1d 92       	st	X+, r1
+
+0000006a <.do_clear_bss_start>:
+  6a:	ad 36       	cpi	r26, 0x6D	; 109
+  6c:	b1 07       	cpc	r27, r17
+  6e:	e1 f7       	brne	.-8      	; 0x68 <.do_clear_bss_loop>
+  70:	0e 94 83 01 	call	0x306	; 0x306 <main>
+  74:	0c 94 d1 01 	jmp	0x3a2	; 0x3a2 <_exit>
+
+00000078 <__bad_interrupt>:
+  78:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000007c <__vector_9>:
+volatile uint32_t running = 0;
+volatile uint32_t timercounter =0;
+
+// interrupt for INT1 pin, to detect high/low voltage changes
+ISR(TIMER0_OVF_vect)
+{
+  7c:	1f 92       	push	r1
+  7e:	0f 92       	push	r0
+  80:	0f b6       	in	r0, 0x3f	; 63
+  82:	0f 92       	push	r0
+  84:	11 24       	eor	r1, r1
+  86:	8f 93       	push	r24
+  88:	9f 93       	push	r25
+  8a:	af 93       	push	r26
+  8c:	bf 93       	push	r27
+    if (up) {
+  8e:	80 91 64 00 	lds	r24, 0x0064
+  92:	88 23       	and	r24, r24
+  94:	99 f0       	breq	.+38     	; 0xbc <__vector_9+0x40>
+        timercounter++;
+  96:	80 91 69 00 	lds	r24, 0x0069
+  9a:	90 91 6a 00 	lds	r25, 0x006A
+  9e:	a0 91 6b 00 	lds	r26, 0x006B
+  a2:	b0 91 6c 00 	lds	r27, 0x006C
+  a6:	01 96       	adiw	r24, 0x01	; 1
+  a8:	a1 1d       	adc	r26, r1
+  aa:	b1 1d       	adc	r27, r1
+  ac:	80 93 69 00 	sts	0x0069, r24
+  b0:	90 93 6a 00 	sts	0x006A, r25
+  b4:	a0 93 6b 00 	sts	0x006B, r26
+  b8:	b0 93 6c 00 	sts	0x006C, r27
+    }
+}
+  bc:	bf 91       	pop	r27
+  be:	af 91       	pop	r26
+  c0:	9f 91       	pop	r25
+  c2:	8f 91       	pop	r24
+  c4:	0f 90       	pop	r0
+  c6:	0f be       	out	0x3f, r0	; 63
+  c8:	0f 90       	pop	r0
+  ca:	1f 90       	pop	r1
+  cc:	18 95       	reti
+
+000000ce <light_flashing>:
+
+void light_flashing()
+{
+    
+    if((avg>0)&&(avg<=15))
+  ce:	80 91 60 00 	lds	r24, 0x0060
+  d2:	90 91 61 00 	lds	r25, 0x0061
+  d6:	a0 91 62 00 	lds	r26, 0x0062
+  da:	b0 91 63 00 	lds	r27, 0x0063
+  de:	18 16       	cp	r1, r24
+  e0:	19 06       	cpc	r1, r25
+  e2:	1a 06       	cpc	r1, r26
+  e4:	1b 06       	cpc	r1, r27
+  e6:	74 f4       	brge	.+28     	; 0x104 <light_flashing+0x36>
+  e8:	80 91 60 00 	lds	r24, 0x0060
+  ec:	90 91 61 00 	lds	r25, 0x0061
+  f0:	a0 91 62 00 	lds	r26, 0x0062
+  f4:	b0 91 63 00 	lds	r27, 0x0063
+  f8:	40 97       	sbiw	r24, 0x10	; 16
+  fa:	a1 05       	cpc	r26, r1
+  fc:	b1 05       	cpc	r27, r1
+  fe:	14 f4       	brge	.+4      	; 0x104 <light_flashing+0x36>
+      {
+          PORTB=0b00000001; // first led on
+ 100:	81 e0       	ldi	r24, 0x01	; 1
+ 102:	68 c0       	rjmp	.+208    	; 0x1d4 <light_flashing+0x106>
+       
+      }
+
+      else if((avg>15)&&(avg<=30))
+ 104:	80 91 60 00 	lds	r24, 0x0060
+ 108:	90 91 61 00 	lds	r25, 0x0061
+ 10c:	a0 91 62 00 	lds	r26, 0x0062
+ 110:	b0 91 63 00 	lds	r27, 0x0063
+ 114:	40 97       	sbiw	r24, 0x10	; 16
+ 116:	a1 05       	cpc	r26, r1
+ 118:	b1 05       	cpc	r27, r1
+ 11a:	74 f0       	brlt	.+28     	; 0x138 <light_flashing+0x6a>
+ 11c:	80 91 60 00 	lds	r24, 0x0060
+ 120:	90 91 61 00 	lds	r25, 0x0061
+ 124:	a0 91 62 00 	lds	r26, 0x0062
+ 128:	b0 91 63 00 	lds	r27, 0x0063
+ 12c:	4f 97       	sbiw	r24, 0x1f	; 31
+ 12e:	a1 05       	cpc	r26, r1
+ 130:	b1 05       	cpc	r27, r1
+ 132:	14 f4       	brge	.+4      	; 0x138 <light_flashing+0x6a>
+      {
+        PORTB=0b00000010; // second led on
+ 134:	82 e0       	ldi	r24, 0x02	; 2
+ 136:	4e c0       	rjmp	.+156    	; 0x1d4 <light_flashing+0x106>
+      }
+
+      else if((avg>30)&&(avg<=45))
+ 138:	80 91 60 00 	lds	r24, 0x0060
+ 13c:	90 91 61 00 	lds	r25, 0x0061
+ 140:	a0 91 62 00 	lds	r26, 0x0062
+ 144:	b0 91 63 00 	lds	r27, 0x0063
+ 148:	4f 97       	sbiw	r24, 0x1f	; 31
+ 14a:	a1 05       	cpc	r26, r1
+ 14c:	b1 05       	cpc	r27, r1
+ 14e:	74 f0       	brlt	.+28     	; 0x16c <light_flashing+0x9e>
+ 150:	80 91 60 00 	lds	r24, 0x0060
+ 154:	90 91 61 00 	lds	r25, 0x0061
+ 158:	a0 91 62 00 	lds	r26, 0x0062
+ 15c:	b0 91 63 00 	lds	r27, 0x0063
+ 160:	8e 97       	sbiw	r24, 0x2e	; 46
+ 162:	a1 05       	cpc	r26, r1
+ 164:	b1 05       	cpc	r27, r1
+ 166:	14 f4       	brge	.+4      	; 0x16c <light_flashing+0x9e>
+      {
+        PORTB=0b00000100; // third led on
+ 168:	84 e0       	ldi	r24, 0x04	; 4
+ 16a:	34 c0       	rjmp	.+104    	; 0x1d4 <light_flashing+0x106>
+      }
+
+      else if((avg>45)&&(avg<=60))
+ 16c:	80 91 60 00 	lds	r24, 0x0060
+ 170:	90 91 61 00 	lds	r25, 0x0061
+ 174:	a0 91 62 00 	lds	r26, 0x0062
+ 178:	b0 91 63 00 	lds	r27, 0x0063
+ 17c:	8e 97       	sbiw	r24, 0x2e	; 46
+ 17e:	a1 05       	cpc	r26, r1
+ 180:	b1 05       	cpc	r27, r1
+ 182:	74 f0       	brlt	.+28     	; 0x1a0 <light_flashing+0xd2>
+ 184:	80 91 60 00 	lds	r24, 0x0060
+ 188:	90 91 61 00 	lds	r25, 0x0061
+ 18c:	a0 91 62 00 	lds	r26, 0x0062
+ 190:	b0 91 63 00 	lds	r27, 0x0063
+ 194:	cd 97       	sbiw	r24, 0x3d	; 61
+ 196:	a1 05       	cpc	r26, r1
+ 198:	b1 05       	cpc	r27, r1
+ 19a:	14 f4       	brge	.+4      	; 0x1a0 <light_flashing+0xd2>
+      {
+          PORTB=0b00001000; // fourth led on
+ 19c:	88 e0       	ldi	r24, 0x08	; 8
+ 19e:	1a c0       	rjmp	.+52     	; 0x1d4 <light_flashing+0x106>
+      }
+
+      else if((avg>60)&&(avg<=75))
+ 1a0:	80 91 60 00 	lds	r24, 0x0060
+ 1a4:	90 91 61 00 	lds	r25, 0x0061
+ 1a8:	a0 91 62 00 	lds	r26, 0x0062
+ 1ac:	b0 91 63 00 	lds	r27, 0x0063
+ 1b0:	cd 97       	sbiw	r24, 0x3d	; 61
+ 1b2:	a1 05       	cpc	r26, r1
+ 1b4:	b1 05       	cpc	r27, r1
+ 1b6:	84 f0       	brlt	.+32     	; 0x1d8 <light_flashing+0x10a>
+ 1b8:	80 91 60 00 	lds	r24, 0x0060
+ 1bc:	90 91 61 00 	lds	r25, 0x0061
+ 1c0:	a0 91 62 00 	lds	r26, 0x0062
+ 1c4:	b0 91 63 00 	lds	r27, 0x0063
+ 1c8:	8c 34       	cpi	r24, 0x4C	; 76
+ 1ca:	91 05       	cpc	r25, r1
+ 1cc:	a1 05       	cpc	r26, r1
+ 1ce:	b1 05       	cpc	r27, r1
+ 1d0:	1c f4       	brge	.+6      	; 0x1d8 <light_flashing+0x10a>
+      {
+           PORTB=0b00010000; // fifth led on
+ 1d2:	80 e1       	ldi	r24, 0x10	; 16
+ 1d4:	88 bb       	out	0x18, r24	; 24
+ 1d6:	08 95       	ret
+      }
+
+      else if(avg>75)
+ 1d8:	80 91 60 00 	lds	r24, 0x0060
+ 1dc:	90 91 61 00 	lds	r25, 0x0061
+ 1e0:	a0 91 62 00 	lds	r26, 0x0062
+ 1e4:	b0 91 63 00 	lds	r27, 0x0063
+ 1e8:	8c 34       	cpi	r24, 0x4C	; 76
+ 1ea:	91 05       	cpc	r25, r1
+ 1ec:	a1 05       	cpc	r26, r1
+ 1ee:	b1 05       	cpc	r27, r1
+ 1f0:	14 f0       	brlt	.+4      	; 0x1f6 <light_flashing+0x128>
+      {
+           PORTB=0b00100000; // sixth led on
+ 1f2:	80 e2       	ldi	r24, 0x20	; 32
+ 1f4:	88 bb       	out	0x18, r24	; 24
+ 1f6:	08 95       	ret
+
+000001f8 <__vector_2>:
+      }
+}
+// We assume, that high voltage rise comes before low drop and not vice versa
+// Check change in the level at the PD3 for falling/rising edge
+SIGNAL(INT1_vect){
+ 1f8:	1f 92       	push	r1
+ 1fa:	0f 92       	push	r0
+ 1fc:	0f b6       	in	r0, 0x3f	; 63
+ 1fe:	0f 92       	push	r0
+ 200:	11 24       	eor	r1, r1
+ 202:	2f 93       	push	r18
+ 204:	3f 93       	push	r19
+ 206:	4f 93       	push	r20
+ 208:	5f 93       	push	r21
+ 20a:	6f 93       	push	r22
+ 20c:	7f 93       	push	r23
+ 20e:	8f 93       	push	r24
+ 210:	9f 93       	push	r25
+ 212:	af 93       	push	r26
+ 214:	bf 93       	push	r27
+ 216:	ef 93       	push	r30
+ 218:	ff 93       	push	r31
+    if(running){ //accept interrupts only when sonar was started
+ 21a:	80 91 65 00 	lds	r24, 0x0065
+ 21e:	90 91 66 00 	lds	r25, 0x0066
+ 222:	a0 91 67 00 	lds	r26, 0x0067
+ 226:	b0 91 68 00 	lds	r27, 0x0068
+ 22a:	00 97       	sbiw	r24, 0x00	; 0
+ 22c:	a1 05       	cpc	r26, r1
+ 22e:	b1 05       	cpc	r27, r1
+ 230:	09 f4       	brne	.+2      	; 0x234 <__vector_2+0x3c>
+ 232:	41 c0       	rjmp	.+130    	; 0x2b6 <__vector_2+0xbe>
+        if (up == 0) { // voltage rise, start time measurement
+ 234:	80 91 64 00 	lds	r24, 0x0064
+ 238:	88 23       	and	r24, r24
+ 23a:	81 f4       	brne	.+32     	; 0x25c <__vector_2+0x64>
+            up = 1;
+ 23c:	81 e0       	ldi	r24, 0x01	; 1
+ 23e:	80 93 64 00 	sts	0x0064, r24
+            timercounter = 0;            
+ 242:	10 92 69 00 	sts	0x0069, r1
+ 246:	10 92 6a 00 	sts	0x006A, r1
+ 24a:	10 92 6b 00 	sts	0x006B, r1
+ 24e:	10 92 6c 00 	sts	0x006C, r1
+            TCCR0 |= (0 << CS02)|(0 << CS01)|(1 << CS00); // Start/initialize timer with prescalar 0
+ 252:	83 b7       	in	r24, 0x33	; 51
+ 254:	81 60       	ori	r24, 0x01	; 1
+ 256:	83 bf       	out	0x33, r24	; 51
+            TCNT0 = 0; // Initialize Counter
+ 258:	12 be       	out	0x32, r1	; 50
+ 25a:	2d c0       	rjmp	.+90     	; 0x2b6 <__vector_2+0xbe>
+        } else { // voltage drop, stop time measurement
+            up = 0;
+ 25c:	10 92 64 00 	sts	0x0064, r1
+            avg = (timercounter*256+TCNT0)/58;// divide by 58 to get distance in cm
+ 260:	60 91 69 00 	lds	r22, 0x0069
+ 264:	70 91 6a 00 	lds	r23, 0x006A
+ 268:	80 91 6b 00 	lds	r24, 0x006B
+ 26c:	90 91 6c 00 	lds	r25, 0x006C
+ 270:	22 b7       	in	r18, 0x32	; 50
+ 272:	98 2f       	mov	r25, r24
+ 274:	87 2f       	mov	r24, r23
+ 276:	76 2f       	mov	r23, r22
+ 278:	66 27       	eor	r22, r22
+ 27a:	62 0f       	add	r22, r18
+ 27c:	71 1d       	adc	r23, r1
+ 27e:	81 1d       	adc	r24, r1
+ 280:	91 1d       	adc	r25, r1
+ 282:	2a e3       	ldi	r18, 0x3A	; 58
+ 284:	30 e0       	ldi	r19, 0x00	; 0
+ 286:	40 e0       	ldi	r20, 0x00	; 0
+ 288:	50 e0       	ldi	r21, 0x00	; 0
+ 28a:	0e 94 af 01 	call	0x35e	; 0x35e <__udivmodsi4>
+ 28e:	c9 01       	movw	r24, r18
+ 290:	da 01       	movw	r26, r20
+ 292:	80 93 60 00 	sts	0x0060, r24
+ 296:	90 93 61 00 	sts	0x0061, r25
+ 29a:	a0 93 62 00 	sts	0x0062, r26
+ 29e:	b0 93 63 00 	sts	0x0063, r27
+            light_flashing();
+ 2a2:	0e 94 67 00 	call	0xce	; 0xce <light_flashing>
+            running = 0;
+ 2a6:	10 92 65 00 	sts	0x0065, r1
+ 2aa:	10 92 66 00 	sts	0x0066, r1
+ 2ae:	10 92 67 00 	sts	0x0067, r1
+ 2b2:	10 92 68 00 	sts	0x0068, r1
+        }
+    }
+}
+ 2b6:	ff 91       	pop	r31
+ 2b8:	ef 91       	pop	r30
+ 2ba:	bf 91       	pop	r27
+ 2bc:	af 91       	pop	r26
+ 2be:	9f 91       	pop	r25
+ 2c0:	8f 91       	pop	r24
+ 2c2:	7f 91       	pop	r23
+ 2c4:	6f 91       	pop	r22
+ 2c6:	5f 91       	pop	r21
+ 2c8:	4f 91       	pop	r20
+ 2ca:	3f 91       	pop	r19
+ 2cc:	2f 91       	pop	r18
+ 2ce:	0f 90       	pop	r0
+ 2d0:	0f be       	out	0x3f, r0	; 63
+ 2d2:	0f 90       	pop	r0
+ 2d4:	1f 90       	pop	r1
+ 2d6:	18 95       	reti
+
+000002d8 <send_trigger>:
+
+//send signal for trigger the ultrasonic for 10uS
+void send_trigger()
+{
+    PORTD = 0x00;
+ 2d8:	12 ba       	out	0x12, r1	; 18
+    can be achieved.
+*/
+void
+_delay_loop_1(uint8_t __count)
+{
+	__asm__ volatile (
+ 2da:	8d e0       	ldi	r24, 0x0D	; 13
+ 2dc:	8a 95       	dec	r24
+ 2de:	f1 f7       	brne	.-4      	; 0x2dc <send_trigger+0x4>
+    _delay_us(5);
+    PORTD = 0xf0;
+ 2e0:	80 ef       	ldi	r24, 0xF0	; 240
+ 2e2:	82 bb       	out	0x12, r24	; 18
+    running = 1;
+ 2e4:	81 e0       	ldi	r24, 0x01	; 1
+ 2e6:	90 e0       	ldi	r25, 0x00	; 0
+ 2e8:	a0 e0       	ldi	r26, 0x00	; 0
+ 2ea:	b0 e0       	ldi	r27, 0x00	; 0
+ 2ec:	80 93 65 00 	sts	0x0065, r24
+ 2f0:	90 93 66 00 	sts	0x0066, r25
+ 2f4:	a0 93 67 00 	sts	0x0067, r26
+ 2f8:	b0 93 68 00 	sts	0x0068, r27
+ 2fc:	8a e1       	ldi	r24, 0x1A	; 26
+ 2fe:	8a 95       	dec	r24
+ 300:	f1 f7       	brne	.-4      	; 0x2fe <send_trigger+0x26>
+    _delay_us(10);
+    PORTD = 0x00;
+ 302:	12 ba       	out	0x12, r1	; 18
+	
+	
+}
+ 304:	08 95       	ret
+
+00000306 <main>:
+
+int main()
+{
+ 306:	cf 93       	push	r28
+ 308:	df 93       	push	r29
+    DDRD = 0xf0;//pin d3 is used as input and pin d6 as output for trigger
+ 30a:	80 ef       	ldi	r24, 0xF0	; 240
+ 30c:	81 bb       	out	0x11, r24	; 17
+    PORTD = 0x00;
+ 30e:	12 ba       	out	0x12, r1	; 18
+    DDRB = 0xff;
+ 310:	8f ef       	ldi	r24, 0xFF	; 255
+ 312:	87 bb       	out	0x17, r24	; 23
+    PORTB = 0x00;
+ 314:	18 ba       	out	0x18, r1	; 24
+    DDRA = 0xff;
+ 316:	8a bb       	out	0x1a, r24	; 26
+    PORTA = 0x00;
+ 318:	1b ba       	out	0x1b, r1	; 27
+
+    MCUCR |= (0 << ISC11) | (1 << ISC10); // enable interrupt on any(rising/droping) edge
+ 31a:	85 b7       	in	r24, 0x35	; 53
+ 31c:	84 60       	ori	r24, 0x04	; 4
+ 31e:	85 bf       	out	0x35, r24	; 53
+    GICR |= (1 << INT1);  //Turns on INT1
+ 320:	8b b7       	in	r24, 0x3b	; 59
+ 322:	80 68       	ori	r24, 0x80	; 128
+ 324:	8b bf       	out	0x3b, r24	; 59
+
+    TIMSK |= (1 << TOIE0);  // enable timer interrupt
+ 326:	89 b7       	in	r24, 0x39	; 57
+ 328:	81 60       	ori	r24, 0x01	; 1
+ 32a:	89 bf       	out	0x39, r24	; 57
+    sei();  // enable all(global) interrupts
+ 32c:	78 94       	sei
+    milliseconds can be achieved.
+ */
+void
+_delay_loop_2(uint16_t __count)
+{
+	__asm__ volatile (
+ 32e:	c8 ec       	ldi	r28, 0xC8	; 200
+ 330:	d0 e0       	ldi	r29, 0x00	; 0
+    while(1)
+    {
+
+        if(running == 1) {
+ 332:	80 91 65 00 	lds	r24, 0x0065
+ 336:	90 91 66 00 	lds	r25, 0x0066
+ 33a:	a0 91 67 00 	lds	r26, 0x0067
+ 33e:	b0 91 68 00 	lds	r27, 0x0068
+ 342:	01 97       	sbiw	r24, 0x01	; 1
+ 344:	a1 05       	cpc	r26, r1
+ 346:	b1 05       	cpc	r27, r1
+ 348:	a1 f7       	brne	.-24     	; 0x332 <main+0x2c>
+ 34a:	88 e5       	ldi	r24, 0x58	; 88
+ 34c:	92 e0       	ldi	r25, 0x02	; 2
+ 34e:	fe 01       	movw	r30, r28
+ 350:	31 97       	sbiw	r30, 0x01	; 1
+ 352:	f1 f7       	brne	.-4      	; 0x350 <main+0x4a>
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+		{
+			// wait 1/10 ms
+			_delay_loop_2(((F_CPU) / 4e3) / 10);
+			__ticks --;
+ 354:	01 97       	sbiw	r24, 0x01	; 1
+		__ticks = 1;
+	else if (__tmp > 65535)
+	{
+		//	__ticks = requested delay in 1/10 ms
+		__ticks = (uint16_t) (__ms * 10.0);
+		while(__ticks)
+ 356:	d9 f7       	brne	.-10     	; 0x34e <main+0x48>
+            _delay_ms(60);
+            send_trigger();
+ 358:	0e 94 6c 01 	call	0x2d8	; 0x2d8 <send_trigger>
+ 35c:	ea cf       	rjmp	.-44     	; 0x332 <main+0x2c>
+
+0000035e <__udivmodsi4>:
+ 35e:	a1 e2       	ldi	r26, 0x21	; 33
+ 360:	1a 2e       	mov	r1, r26
+ 362:	aa 1b       	sub	r26, r26
+ 364:	bb 1b       	sub	r27, r27
+ 366:	fd 01       	movw	r30, r26
+ 368:	0d c0       	rjmp	.+26     	; 0x384 <__udivmodsi4_ep>
+
+0000036a <__udivmodsi4_loop>:
+ 36a:	aa 1f       	adc	r26, r26
+ 36c:	bb 1f       	adc	r27, r27
+ 36e:	ee 1f       	adc	r30, r30
+ 370:	ff 1f       	adc	r31, r31
+ 372:	a2 17       	cp	r26, r18
+ 374:	b3 07       	cpc	r27, r19
+ 376:	e4 07       	cpc	r30, r20
+ 378:	f5 07       	cpc	r31, r21
+ 37a:	20 f0       	brcs	.+8      	; 0x384 <__udivmodsi4_ep>
+ 37c:	a2 1b       	sub	r26, r18
+ 37e:	b3 0b       	sbc	r27, r19
+ 380:	e4 0b       	sbc	r30, r20
+ 382:	f5 0b       	sbc	r31, r21
+
+00000384 <__udivmodsi4_ep>:
+ 384:	66 1f       	adc	r22, r22
+ 386:	77 1f       	adc	r23, r23
+ 388:	88 1f       	adc	r24, r24
+ 38a:	99 1f       	adc	r25, r25
+ 38c:	1a 94       	dec	r1
+ 38e:	69 f7       	brne	.-38     	; 0x36a <__udivmodsi4_loop>
+ 390:	60 95       	com	r22
+ 392:	70 95       	com	r23
+ 394:	80 95       	com	r24
+ 396:	90 95       	com	r25
+ 398:	9b 01       	movw	r18, r22
+ 39a:	ac 01       	movw	r20, r24
+ 39c:	bd 01       	movw	r22, r26
+ 39e:	cf 01       	movw	r24, r30
+ 3a0:	08 95       	ret
+
+000003a2 <_exit>:
+ 3a2:	f8 94       	cli
+
+000003a4 <__stop_program>:
+ 3a4:	ff cf       	rjmp	.-2      	; 0x3a4 <__stop_program>
